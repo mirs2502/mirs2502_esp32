@@ -44,7 +44,7 @@ void PID_control(){
   if(r_pwm > 255){
     r_pwm = 255;
   }else if(r_pwm < -255){
-    l_pwm = -255;
+    r_pwm = -255;
   }
   if(l_pwm > 255){
     l_pwm = 255;
