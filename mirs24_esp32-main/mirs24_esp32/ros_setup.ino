@@ -70,11 +70,22 @@ void ros_setup(){
 
   //イベント発生の設定（数字はイベントの発生点の数）
   //デフォルトの発生点はsubscriberが2(/cmd_vel,/params)、serviceが2(/reset,/update)、timerが1（定期実行）の合計5
-  rclc_executor_init(&executor, &support.context, 5, &allocator);
+  // motor_ctrlを追加するので +1 = 6
+  rclc_executor_init(&executor, &support.context, 6, &allocator);
   rclc_executor_add_subscription(&executor, &cmd_vel_sub, &cmd_vel_msg, &cmd_vel_Callback, ON_NEW_DATA);
   rclc_executor_add_subscription(&executor, &param_sub, &param_msg, &param_Callback, ON_NEW_DATA);
   rclc_executor_add_service(&executor, &update_srv, &update_req, &update_res, update_service_callback);
   rclc_executor_add_service(&executor, &reset_srv, &reset_req, &reset_res, reset_service_callback);
+  
+  // Motor Control Service
+  rclc_service_init_default(
+    &motor_ctrl_srv,
+    &node,
+    ROSIDL_GET_SRV_TYPE_SUPPORT(mirs_msgs, srv, BasicCommand),
+    "/motor_ctrl"
+  );
+  rclc_executor_add_service(&executor, &motor_ctrl_srv, &motor_ctrl_req, &motor_ctrl_res, motor_ctrl_callback);
+
   rclc_executor_add_timer(&executor, &timer);
 }
 

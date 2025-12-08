@@ -11,6 +11,7 @@
 #include <mirs_msgs/msg/basic_param.h>
 #include <std_msgs/msg/float64_multi_array.h>
 #include <mirs_msgs/action/trigger.h>
+#include <mirs_msgs/srv/basic_command.h> // Added for motor control
 #include <pthread.h>
 #include "config.h"
 
@@ -32,6 +33,7 @@ void cmd_vel_Callback(const void * msgin);
 void param_Callback(const void * msgin);
 void update_service_callback(const void * req, void * res);
 void reset_service_callback(const void * req, void * res);
+void motor_ctrl_callback(const void * req, void * res); // Added callback
 static void IRAM_ATTR enc_change_l();
 static void IRAM_ATTR enc_change_r();
 // --- ここまで追加 ---
@@ -53,6 +55,8 @@ mirs_msgs__srv__ParameterUpdate_Response update_res;
 mirs_msgs__srv__ParameterUpdate_Request update_req;
 mirs_msgs__srv__SimpleCommand_Response reset_res;
 mirs_msgs__srv__SimpleCommand_Request reset_req;
+mirs_msgs__srv__BasicCommand_Response motor_ctrl_res; // Added response
+mirs_msgs__srv__BasicCommand_Request motor_ctrl_req;   // Added request
 
 //publisher,subscriber,serviceの宣言
 rcl_publisher_t enc_pub;
@@ -62,6 +66,7 @@ rcl_subscription_t cmd_vel_sub;
 rcl_subscription_t param_sub;
 rcl_service_t update_srv;
 rcl_service_t reset_srv;
+rcl_service_t motor_ctrl_srv; // Added service
 
 //ノードに関わる宣言
 rclc_executor_t executor;
@@ -109,7 +114,16 @@ double vlt_2 = 0;
 //WatchDog用
 uint32_t lastCalledAt;
 
+// Motor Control Pin
+#define MOTOR_PIN 25 // Example pin, adjust as needed
+#define MOTOR_PWM_CHANNEL 4 // Use a different channel than motors
+
 void setup() {
+  // Initialize Motor PWM
+  ledcSetup(MOTOR_PWM_CHANNEL, 5000, 8); // 5kHz, 8bit
+  ledcAttachPin(MOTOR_PIN, MOTOR_PWM_CHANNEL);
+  ledcWrite(MOTOR_PWM_CHANNEL, 0); // Start OFF
+
   ros_setup();
 
   encoder_open();
@@ -123,3 +137,4 @@ void loop() {
   delay(10);
   rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100));
 }
+
