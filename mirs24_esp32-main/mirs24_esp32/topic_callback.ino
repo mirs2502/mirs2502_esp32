@@ -65,6 +65,9 @@ void param_Callback(const void * msgin){
 
 // モーター制御サービスのコールバック関数
 void motor_ctrl_callback(const void * req, void * res){
+  // Switch to PWM mode
+  control_mode = 1;
+
   mirs_msgs__srv__BasicCommand_Request * req_in = (mirs_msgs__srv__BasicCommand_Request *) req;
   mirs_msgs__srv__BasicCommand_Response * res_in = (mirs_msgs__srv__BasicCommand_Response *) res;
 

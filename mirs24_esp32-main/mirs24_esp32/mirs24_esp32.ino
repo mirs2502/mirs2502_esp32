@@ -118,6 +118,9 @@ uint32_t lastCalledAt;
 #define MOTOR_PIN 25 // Example pin, adjust as needed
 #define MOTOR_PWM_CHANNEL 4 // Use a different channel than motors
 
+// Control Mode (0: PID, 1: PWM)
+int control_mode = 0;
+
 void setup() {
   // Initialize Motor PWM
   ledcSetup(MOTOR_PWM_CHANNEL, 5000, 8); // 5kHz, 8bit

@@ -4,6 +4,8 @@ extern DRAM_ATTR volatile int32_t count_r;
 extern DRAM_ATTR volatile int32_t prev_count_l;
 extern DRAM_ATTR volatile int32_t prev_count_r;
 
+extern int control_mode;
+
 void calculate_vel(){
   //エンコーダーの変化量を計算
   int32_t delta_left = count_l - prev_count_l;
@@ -27,6 +29,11 @@ void calculate_vel(){
 
 void PID_control(){
   calculate_vel();
+
+  // If in PWM mode, skip PID control to avoid overwriting PWM values
+  if (control_mode == 1) {
+    return;
+  }
 
   float r_err = r_vel_cmd - r_vel;
   float l_err = l_vel_cmd - l_vel;
