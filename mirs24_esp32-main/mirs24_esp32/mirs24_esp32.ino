@@ -122,11 +122,6 @@ uint32_t lastCalledAt;
 int control_mode = 0;
 
 void setup() {
-  // Initialize Motor PWM
-  ledcSetup(MOTOR_PWM_CHANNEL, 5000, 8); // 5kHz, 8bit
-  ledcAttachPin(MOTOR_PIN, MOTOR_PWM_CHANNEL);
-  ledcWrite(MOTOR_PWM_CHANNEL, 0); // Start OFF
-
   ros_setup();
 
   encoder_open();

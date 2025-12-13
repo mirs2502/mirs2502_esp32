@@ -64,6 +64,7 @@ void param_Callback(const void * msgin){
 }
 
 // モーター制御サービスのコールバック関数
+// モーター制御サービスのコールバック関数
 void motor_ctrl_callback(const void * req, void * res){
   // Switch to PWM mode
   control_mode = 1;
@@ -71,26 +72,30 @@ void motor_ctrl_callback(const void * req, void * res){
   mirs_msgs__srv__BasicCommand_Request * req_in = (mirs_msgs__srv__BasicCommand_Request *) req;
   mirs_msgs__srv__BasicCommand_Response * res_in = (mirs_msgs__srv__BasicCommand_Response *) res;
 
-  // param1をPWM値として使用
+  // param1をPWM値として使用 (直進のみ)
   int pwm_val = (int)req_in->param1;
   
   // PWM値の制限 (8bit resolution: 0-255)
   if(pwm_val > 255) pwm_val = 255;
-  if(pwm_val < 0) pwm_val = 0;
+  if(pwm_val < -255) pwm_val = -255;
 
-  // mirs24_esp32.inoで定義されたマクロを使用
-  // Arduino IDEでは全ファイルが結合されるため参照可能
-  // ただし、定義が見えない場合はここでも定義するか、共通ヘッダに移動すべき
-  // ここでは安全のため直接数値を書くか、extern宣言はできないので(defineだから)、
-  // 念のためここでも定義するか、あるいはconfig.hに入れるのがベストだが、
-  // 簡易的にハードコードまたは再定義で対応する。
-  // しかし、同じディレクトリのinoファイルは連結されるので、mirs24_esp32.inoのdefineは有効なはず。
-  
-  #ifndef MOTOR_PWM_CHANNEL
-  #define MOTOR_PWM_CHANNEL 4
-  #endif
+  // 右モーター制御
+  if(pwm_val >= 0){
+    digitalWrite(PIN_DIR_R, LOW);
+    ledcWrite(r_Channel, uint8_t(pwm_val));
+  }else{
+    digitalWrite(PIN_DIR_R, HIGH);
+    ledcWrite(r_Channel, uint8_t(-pwm_val));
+  }
 
-  ledcWrite(MOTOR_PWM_CHANNEL, pwm_val);
+  // 左モーター制御
+  if(pwm_val >= 0){
+    digitalWrite(PIN_DIR_L, HIGH);
+    ledcWrite(l_Channel, uint8_t(pwm_val));
+  }else{
+    digitalWrite(PIN_DIR_L, LOW);
+    ledcWrite(l_Channel, uint8_t(-pwm_val));
+  }
 
   res_in->success = true;
 }
