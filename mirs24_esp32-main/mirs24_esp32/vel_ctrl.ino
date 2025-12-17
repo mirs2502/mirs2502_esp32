@@ -22,7 +22,8 @@ void calculate_vel(){
   double left_distance = delta_left_rad * WHEEL_RADIUS;
   double right_distance = delta_right_rad * WHEEL_RADIUS;
 
-  // 現在の速度を計算
+  // 現在の速度を計算 (m/s)
+  // 0.1秒間隔で呼ばれる前提
   l_vel = left_distance / 0.1;
   r_vel = right_distance / 0.1;
 }
@@ -35,11 +36,31 @@ void PID_control(){
     return;
   }
 
+  // Reset PID terms if command is 0 (Stop)
+  if (r_vel_cmd == 0) {
+    r_err_sum = 0;
+    prev_r_err = 0;
+    r_vel = 0; // Optional: Force zero velocity if stopped
+  }
+  if (l_vel_cmd == 0) {
+    l_err_sum = 0;
+    prev_l_err = 0;
+    l_vel = 0;
+  }
+
   float r_err = r_vel_cmd - r_vel;
   float l_err = l_vel_cmd - l_vel;
 
   r_err_sum += r_err;
   l_err_sum += l_err;
+
+  // Anti-Windup (Limit Integral Term)
+  // Limit sum to contribute at most ~50% of max PWM (e.g., 128)
+  // 128 / RKI (30) ~= 4.0
+  if (r_err_sum > 4.0) r_err_sum = 4.0;
+  if (r_err_sum < -4.0) r_err_sum = -4.0;
+  if (l_err_sum > 4.0) l_err_sum = 4.0;
+  if (l_err_sum < -4.0) l_err_sum = -4.0;
 
   // PID計算を実行
   double r_pwm = RKP * r_err + RKI * r_err_sum + RKD *  (r_err - prev_r_err);
@@ -73,7 +94,7 @@ void PID_control(){
     digitalWrite(PIN_DIR_L,LOW);
   }
 
-  //  確実な停止
+  //  確実な停止 (PWM 0出力)
   if(r_vel_cmd == 0){
     r_pwm = 0;
   }

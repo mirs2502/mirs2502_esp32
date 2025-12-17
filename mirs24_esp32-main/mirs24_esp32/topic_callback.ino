@@ -34,6 +34,9 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
 // cmd_velメッセージのコールバック関数
 void cmd_vel_Callback(const void * msgin) {
   const geometry_msgs__msg__Twist * vel_msg = (const geometry_msgs__msg__Twist *)msgin;
+  
+  // Switch back to PID mode
+  control_mode = 0;
 
   // linear.x と angular.z のデータを取得
   linear_x = vel_msg->linear.x;

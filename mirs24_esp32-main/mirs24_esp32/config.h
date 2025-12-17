@@ -23,16 +23,17 @@
 #define WATCHDOG_TIMEOUT 500
 
 //足回り速度制御用
-double RKP = 80.0;
-double RKI = 30.0;
-double RKD = 8.0;
-double LKP = 100.0;
-double LKI = 30.0;
-double LKD = 8.0;
+//足回り速度制御用
+double RKP = 40.0;
+double RKI = 10.0;
+double RKD = 10.0;
+double LKP = 50.0;
+double LKI = 10.0;
+double LKD = 10.0;
 
 //車体パラメータ
 #define COUNTS_PER_REV    4096.0
-double WHEEL_RADIUS = 0.04;  //ホイール径
+double WHEEL_RADIUS = 0.03775;  //ホイール径 (再補正済み)
 double WHEEL_BASE = 0.38;  //車輪間幅
 
 // PWM設定
