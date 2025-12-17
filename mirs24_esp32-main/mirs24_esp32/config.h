@@ -20,7 +20,7 @@
 //絶対に設定しろ!!!!!!!
 #define ROS_DOMAIN_ID 90
 
-#define WATCHDOG_TIMEOUT 1000
+#define WATCHDOG_TIMEOUT 500
 
 //足回り速度制御用
 double RKP = 80.0;
