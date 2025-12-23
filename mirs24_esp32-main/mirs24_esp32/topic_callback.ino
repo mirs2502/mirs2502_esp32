@@ -68,36 +68,27 @@ void param_Callback(const void * msgin){
 
 // モーター制御サービスのコールバック関数
 // モーター制御サービスのコールバック関数
+// モーター制御サービスのコールバック関数
 void motor_ctrl_callback(const void * req, void * res){
-  // Switch to PWM mode
-  control_mode = 1;
-
+  // control_mode は変更しない (PID制御と独立して動かすため)
+  
   mirs_msgs__srv__BasicCommand_Request * req_in = (mirs_msgs__srv__BasicCommand_Request *) req;
   mirs_msgs__srv__BasicCommand_Response * res_in = (mirs_msgs__srv__BasicCommand_Response *) res;
 
-  // param1をPWM値として使用 (直進のみ)
+  // param1をPWM値として使用
   int pwm_val = (int)req_in->param1;
   
   // PWM値の制限 (8bit resolution: 0-255)
   if(pwm_val > 255) pwm_val = 255;
   if(pwm_val < -255) pwm_val = -255;
 
-  // 右モーター制御
+  // 清掃用モーター制御
   if(pwm_val >= 0){
-    digitalWrite(PIN_DIR_R, LOW);
-    ledcWrite(r_Channel, uint8_t(pwm_val));
+    digitalWrite(PIN_CLEAN_DIR, LOW); // 正転（仮）
+    ledcWrite(clean_Channel, uint8_t(pwm_val));
   }else{
-    digitalWrite(PIN_DIR_R, HIGH);
-    ledcWrite(r_Channel, uint8_t(-pwm_val));
-  }
-
-  // 左モーター制御
-  if(pwm_val >= 0){
-    digitalWrite(PIN_DIR_L, HIGH);
-    ledcWrite(l_Channel, uint8_t(pwm_val));
-  }else{
-    digitalWrite(PIN_DIR_L, LOW);
-    ledcWrite(l_Channel, uint8_t(-pwm_val));
+    digitalWrite(PIN_CLEAN_DIR, HIGH); // 逆転（仮）
+    ledcWrite(clean_Channel, uint8_t(-pwm_val));
   }
 
   res_in->success = true;

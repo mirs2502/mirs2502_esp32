@@ -42,4 +42,9 @@ const int32_t l_Channel = 1;
 const int32_t pwmFrequency = 5000; // PWM周波数 (5kHz)
 const int32_t pwmResolution = 8;   // PWM分解能 (8ビット = 0-255)
 
+// 清掃用モーター
+#define PIN_CLEAN_PWM 18
+#define PIN_CLEAN_DIR 19
+const int32_t clean_Channel = 2;
+
 #endif // CONFIG_H_
