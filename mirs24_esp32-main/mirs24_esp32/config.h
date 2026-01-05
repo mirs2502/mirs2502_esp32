@@ -43,8 +43,18 @@ const int32_t pwmFrequency = 5000; // PWM周波数 (5kHz)
 const int32_t pwmResolution = 8;   // PWM分解能 (8ビット = 0-255)
 
 // 清掃用モーター
-#define PIN_CLEAN_PWM 18
-#define PIN_CLEAN_DIR 19
-const int32_t clean_Channel = 2;
+// 清掃用モーター
+#define PIN_CLEAN_PWM_1 18
+#define PIN_CLEAN_DIR_1 19
+
+#define PIN_CLEAN_PWM_2a 23
+#define PIN_CLEAN_DIR_2a 22
+
+#define PIN_CLEAN_PWM_2b 16
+#define PIN_CLEAN_DIR_2b 15
+
+const int32_t clean_Channel_1 = 2;
+const int32_t clean_Channel_2a = 3;
+const int32_t clean_Channel_2b = 4;
 
 #endif // CONFIG_H_

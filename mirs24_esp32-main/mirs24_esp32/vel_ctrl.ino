@@ -117,9 +117,21 @@ void vel_ctrl_set() {
   ledcAttachPin(PIN_PWM_L, l_Channel);
 
   // 清掃用モーター設定
-  pinMode(PIN_CLEAN_DIR, OUTPUT);
-  ledcSetup(clean_Channel, pwmFrequency, pwmResolution);
-  ledcAttachPin(PIN_CLEAN_PWM, clean_Channel);
+  // 清掃用モーター設定
+  // Motor 1
+  pinMode(PIN_CLEAN_DIR_1, OUTPUT);
+  ledcSetup(clean_Channel_1, pwmFrequency, pwmResolution);
+  ledcAttachPin(PIN_CLEAN_PWM_1, clean_Channel_1);
+
+  // Motor 2a
+  pinMode(PIN_CLEAN_DIR_2a, OUTPUT);
+  ledcSetup(clean_Channel_2a, pwmFrequency, pwmResolution);
+  ledcAttachPin(PIN_CLEAN_PWM_2a, clean_Channel_2a);
+
+  // Motor 2b
+  pinMode(PIN_CLEAN_DIR_2b, OUTPUT);
+  ledcSetup(clean_Channel_2b, pwmFrequency, pwmResolution);
+  ledcAttachPin(PIN_CLEAN_PWM_2b, clean_Channel_2b);
 
   curr_vel_msg.data.size = 2; // メッセージ配列のサイズを2に設定
   curr_vel_msg.data.data = (double *)malloc(enc_msg.data.size * sizeof(double)); // 配列のメモリを確保

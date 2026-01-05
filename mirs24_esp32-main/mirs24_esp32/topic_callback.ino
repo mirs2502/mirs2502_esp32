@@ -76,19 +76,43 @@ void motor_ctrl_callback(const void * req, void * res){
   mirs_msgs__srv__BasicCommand_Response * res_in = (mirs_msgs__srv__BasicCommand_Response *) res;
 
   // param1をPWM値として使用
-  int pwm_val = (int)req_in->param1;
+  // param1をMotor ID, param2をPWM値として使用
+  int motor_id = (int)req_in->param1;
+  int pwm_val = (int)req_in->param2;
   
   // PWM値の制限 (8bit resolution: 0-255)
   if(pwm_val > 255) pwm_val = 255;
   if(pwm_val < -255) pwm_val = -255;
 
   // 清掃用モーター制御
-  if(pwm_val >= 0){
-    digitalWrite(PIN_CLEAN_DIR, LOW); // 正転（仮）
-    ledcWrite(clean_Channel, uint8_t(pwm_val));
-  }else{
-    digitalWrite(PIN_CLEAN_DIR, HIGH); // 逆転（仮）
-    ledcWrite(clean_Channel, uint8_t(-pwm_val));
+  // 安全対策: 足回り用の変数やcontrol_modeには一切触れない
+
+  if (motor_id == 1) {
+    // Motor 1 Control
+    if(pwm_val >= 0){
+      digitalWrite(PIN_CLEAN_DIR_1, LOW); 
+      ledcWrite(clean_Channel_1, uint8_t(pwm_val));
+    }else{
+      digitalWrite(PIN_CLEAN_DIR_1, HIGH); 
+      ledcWrite(clean_Channel_1, uint8_t(-pwm_val));
+    }
+  } else if (motor_id == 2) {
+    // Motor 2 Control (Synchronized 2a & 2b)
+    if(pwm_val >= 0){
+      // Forward
+      digitalWrite(PIN_CLEAN_DIR_2a, LOW);
+      ledcWrite(clean_Channel_2a, uint8_t(pwm_val));
+      
+      digitalWrite(PIN_CLEAN_DIR_2b, LOW);
+      ledcWrite(clean_Channel_2b, uint8_t(pwm_val));
+    }else{
+      // Reverse
+      digitalWrite(PIN_CLEAN_DIR_2a, HIGH);
+      ledcWrite(clean_Channel_2a, uint8_t(-pwm_val));
+
+      digitalWrite(PIN_CLEAN_DIR_2b, HIGH);
+      ledcWrite(clean_Channel_2b, uint8_t(-pwm_val));
+    }
   }
 
   res_in->success = true;
