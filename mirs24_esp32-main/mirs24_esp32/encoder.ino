@@ -30,14 +30,11 @@ static void IRAM_ATTR enc_change_r() {
 }
 
 void encoder_open() {
-  pinMode(PIN_ENC_A_L, INPUT);
-  pinMode(PIN_ENC_B_L, INPUT);
-  pinMode(PIN_ENC_A_R, INPUT);
-  pinMode(PIN_ENC_B_R, INPUT);
-  digitalWrite(PIN_ENC_A_L, HIGH);
-  digitalWrite(PIN_ENC_B_L, HIGH);
-  digitalWrite(PIN_ENC_A_R, HIGH);
-  digitalWrite(PIN_ENC_B_R, HIGH);
+  pinMode(PIN_ENC_A_L, INPUT_PULLUP);
+  pinMode(PIN_ENC_B_L, INPUT_PULLUP);
+  pinMode(PIN_ENC_A_R, INPUT_PULLUP);
+  pinMode(PIN_ENC_B_R, INPUT_PULLUP);
+  
   attachInterrupt(digitalPinToInterrupt(PIN_ENC_A_L), enc_change_l, CHANGE);
   attachInterrupt(digitalPinToInterrupt(PIN_ENC_A_R), enc_change_r, CHANGE);
 

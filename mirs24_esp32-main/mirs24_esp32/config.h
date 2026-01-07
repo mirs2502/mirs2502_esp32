@@ -27,14 +27,14 @@
 double RKP = 40.0;
 double RKI = 10.0;
 double RKD = 10.0;
-double LKP = 50.0;
+double LKP = 40.0;
 double LKI = 10.0;
 double LKD = 10.0;
 
 //車体パラメータ
 #define COUNTS_PER_REV    4096.0
-double WHEEL_RADIUS = 0.03775;  //ホイール径 (再補正済み)
-double WHEEL_BASE = 0.38;  //車輪間幅
+double WHEEL_RADIUS = 0.0391;  //ホイール径 (再補正済み)
+double WHEEL_BASE = 0.424;  //車輪間幅
 
 // PWM設定
 const int32_t r_Channel = 0;        // PWMチャンネル

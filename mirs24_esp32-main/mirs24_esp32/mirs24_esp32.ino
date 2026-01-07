@@ -115,17 +115,17 @@ double vlt_2 = 0;
 uint32_t lastCalledAt;
 
 // Motor Control Pin
-#define MOTOR_PIN 25 // Example pin, adjust as needed
-#define MOTOR_PWM_CHANNEL 4 // Use a different channel than motors
+// #define MOTOR_PIN 25 // Example pin, adjust as needed
+// #define MOTOR_PWM_CHANNEL 4 // Use a different channel than motors
 
 // Control Mode (0: PID, 1: PWM)
 int control_mode = 0;
 
 void setup() {
+  vel_ctrl_set();
   ros_setup();
 
   encoder_open();
-  vel_ctrl_set();
   vlt_setup();
   
   delay(500);

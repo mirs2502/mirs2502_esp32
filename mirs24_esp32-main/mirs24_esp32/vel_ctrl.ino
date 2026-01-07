@@ -6,7 +6,23 @@ extern DRAM_ATTR volatile int32_t prev_count_r;
 
 extern int control_mode;
 
+unsigned long prev_calc_time = 0;
+
 void calculate_vel(){
+  unsigned long current_time = millis();
+  
+  if (prev_calc_time == 0) {
+    prev_calc_time = current_time;
+    prev_count_l = count_l;
+    prev_count_r = count_r;
+    return;
+  }
+
+  double dt = (double)(current_time - prev_calc_time) / 1000.0;
+  prev_calc_time = current_time;
+
+  if (dt <= 0.0) return;
+
   //エンコーダーの変化量を計算
   int32_t delta_left = count_l - prev_count_l;
   int32_t delta_right = count_r - prev_count_r;
@@ -23,9 +39,8 @@ void calculate_vel(){
   double right_distance = delta_right_rad * WHEEL_RADIUS;
 
   // 現在の速度を計算 (m/s)
-  // 0.1秒間隔で呼ばれる前提
-  l_vel = left_distance / 0.1;
-  r_vel = right_distance / 0.1;
+  l_vel = left_distance / dt;
+  r_vel = right_distance / dt;
 }
 
 void PID_control(){
@@ -134,7 +149,11 @@ void vel_ctrl_set() {
   ledcAttachPin(PIN_CLEAN_PWM_2b, clean_Channel_2b);
 
   curr_vel_msg.data.size = 2; // メッセージ配列のサイズを2に設定
-  curr_vel_msg.data.data = (double *)malloc(enc_msg.data.size * sizeof(double)); // 配列のメモリを確保
+  curr_vel_msg.data.data = (double *)malloc(curr_vel_msg.data.size * sizeof(double)); // 配列のメモリを確保
   curr_vel_msg.data.data[0] = 0;
   curr_vel_msg.data.data[1] = 0;
+
+  // 初期化時に確実に停止させる
+  ledcWrite(r_Channel, 0);
+  ledcWrite(l_Channel, 0);
 }
