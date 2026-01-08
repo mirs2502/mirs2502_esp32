@@ -8,14 +8,14 @@
 #define PIN_ENC_B_R 14
 
 //足回り用
-#define PIN_DIR_R   25
-#define PIN_PWM_R   26
-#define PIN_DIR_L   32
-#define PIN_PWM_L   33
+#define PIN_DIR_R 25
+#define PIN_PWM_R 26
+#define PIN_DIR_L 32
+#define PIN_PWM_L 33
 
 //バッテリー用
-#define PIN_BATT_1  27
-#define PIN_BATT_2  28
+#define PIN_BATT_1 27
+#define PIN_BATT_2 28
 
 //絶対に設定しろ!!!!!!!
 #define ROS_DOMAIN_ID 90
@@ -24,23 +24,23 @@
 
 //足回り速度制御用
 //足回り速度制御用
-double RKP = 40.0;
-double RKI = 10.0;
+double RKP = 60.0;
+double RKI = 30.0;
 double RKD = 10.0;
-double LKP = 40.0;
-double LKI = 10.0;
+double LKP = 60.0;
+double LKI = 30.0;
 double LKD = 10.0;
 
 //車体パラメータ
-#define COUNTS_PER_REV    4096.0
+#define COUNTS_PER_REV 4096.0
 double WHEEL_RADIUS = 0.0391;  //ホイール径 (再補正済み)
-double WHEEL_BASE = 0.424;  //車輪間幅
+double WHEEL_BASE = 0.424;     //車輪間幅
 
 // PWM設定
-const int32_t r_Channel = 0;        // PWMチャンネル
+const int32_t r_Channel = 0;  // PWMチャンネル
 const int32_t l_Channel = 1;
-const int32_t pwmFrequency = 5000; // PWM周波数 (5kHz)
-const int32_t pwmResolution = 8;   // PWM分解能 (8ビット = 0-255)
+const int32_t pwmFrequency = 5000;  // PWM周波数 (5kHz)
+const int32_t pwmResolution = 8;    // PWM分解能 (8ビット = 0-255)
 
 // 清掃用モーター
 // 清掃用モーター
@@ -57,4 +57,4 @@ const int32_t clean_Channel_1 = 2;
 const int32_t clean_Channel_2a = 3;
 const int32_t clean_Channel_2b = 4;
 
-#endif // CONFIG_H_
+#endif  // CONFIG_H_

@@ -84,6 +84,14 @@ void PID_control(){
   prev_r_err = r_err;
   prev_l_err = l_err;
 
+  // Minimum PWM (Deadband compensation)
+  // 60 is a provisional value. Tune this if the robot doesn't move at low speeds.
+  double min_pwm = 30.0;
+  if (r_pwm > 0 && r_pwm < min_pwm) r_pwm = min_pwm;
+  if (r_pwm < 0 && r_pwm > -min_pwm) r_pwm = -min_pwm;
+  if (l_pwm > 0 && l_pwm < min_pwm) l_pwm = min_pwm;
+  if (l_pwm < 0 && l_pwm > -min_pwm) l_pwm = -min_pwm;
+
   if(r_pwm > 255){
     r_pwm = 255;
   }else if(r_pwm < -255){
