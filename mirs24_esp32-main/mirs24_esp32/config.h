@@ -2,10 +2,10 @@
 #define CONFIG_H_
 
 //エンコーダ用
-#define PIN_ENC_A_L 4
-#define PIN_ENC_B_L 5
-#define PIN_ENC_A_R 13
-#define PIN_ENC_B_R 14
+#define PIN_ENC_A_L 5
+#define PIN_ENC_B_L 4
+#define PIN_ENC_A_R 14
+#define PIN_ENC_B_R 13
 
 //足回り用
 #define PIN_DIR_R 25

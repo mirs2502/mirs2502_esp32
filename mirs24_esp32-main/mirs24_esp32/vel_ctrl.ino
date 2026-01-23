@@ -117,6 +117,35 @@ void PID_control(){
     digitalWrite(PIN_DIR_L,LOW);
   }
 
+  // --- Stall Detection (Failsafe) ---
+  static unsigned long stall_start_time_r = 0;
+  static unsigned long stall_start_time_l = 0;
+  const int STALL_PWM_THRESHOLD = 50;
+  const unsigned long STALL_TIME_THRESHOLD = 1000; // 1 second
+
+  // Right Motor Stall Check
+  if (r_pwm > STALL_PWM_THRESHOLD && abs(r_vel) < 0.001) {
+    if (stall_start_time_r == 0) {
+      stall_start_time_r = millis();
+    } else if (millis() - stall_start_time_r > STALL_TIME_THRESHOLD) {
+      r_pwm = 0; // Force stop
+    }
+  } else {
+    stall_start_time_r = 0;
+  }
+
+  // Left Motor Stall Check
+  if (l_pwm > STALL_PWM_THRESHOLD && abs(l_vel) < 0.001) {
+    if (stall_start_time_l == 0) {
+      stall_start_time_l = millis();
+    } else if (millis() - stall_start_time_l > STALL_TIME_THRESHOLD) {
+      l_pwm = 0; // Force stop
+    }
+  } else {
+    stall_start_time_l = 0;
+  }
+  // ----------------------------------
+
   //  確実な停止 (PWM 0出力)
   if(r_vel_cmd == 0){
     r_pwm = 0;

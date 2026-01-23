@@ -2,6 +2,11 @@
 extern DRAM_ATTR volatile int32_t count_l;
 extern DRAM_ATTR volatile int32_t count_r;
 
+// Watchdog variables for cleaning motors
+unsigned long last_motor1_cmd_time = 0;
+unsigned long last_motor2_cmd_time = 0;
+const unsigned long CLEAN_MOTOR_TIMEOUT = 1000; // 1 second timeout
+
 
 //ノードのタイマーコールバック関数
 void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
@@ -28,6 +33,19 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
     rcl_publish(&enc_pub, &enc_msg, NULL);
     rcl_publish(&vlt_pub, &vlt_msg, NULL);
     rcl_publish(&curr_vel_pub, &curr_vel_msg, NULL);
+
+    // --- Cleaning Motor Watchdog ---
+    unsigned long now = millis();
+    if (last_motor1_cmd_time != 0 && (now - last_motor1_cmd_time > CLEAN_MOTOR_TIMEOUT)) {
+      ledcWrite(clean_Channel_1, 0); // Stop Motor 1
+      last_motor1_cmd_time = 0; // Reset
+    }
+    if (last_motor2_cmd_time != 0 && (now - last_motor2_cmd_time > CLEAN_MOTOR_TIMEOUT)) {
+      ledcWrite(clean_Channel_2a, 0); // Stop Motor 2a
+      ledcWrite(clean_Channel_2b, 0); // Stop Motor 2b
+      last_motor2_cmd_time = 0; // Reset
+    }
+    // -------------------------------
   }
 }
 
@@ -89,6 +107,7 @@ void motor_ctrl_callback(const void * req, void * res){
 
   if (motor_id == 1) {
     // Motor 1 Control
+    last_motor1_cmd_time = millis(); // Update watchdog timer
     if(pwm_val >= 0){
       digitalWrite(PIN_CLEAN_DIR_1, LOW); 
       ledcWrite(clean_Channel_1, uint8_t(pwm_val));
@@ -98,6 +117,7 @@ void motor_ctrl_callback(const void * req, void * res){
     }
   } else if (motor_id == 2) {
     // Motor 2 Control (Synchronized 2a & 2b)
+    last_motor2_cmd_time = millis(); // Update watchdog timer
     if(pwm_val >= 0){
       // Forward
       digitalWrite(PIN_CLEAN_DIR_2a, LOW);
